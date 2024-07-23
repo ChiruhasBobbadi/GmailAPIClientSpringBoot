@@ -1,6 +1,7 @@
 package com.demo.gmailAPIClient.service;
 
 import com.demo.gmailAPIClient.model.EmailRequest;
+import com.demo.gmailAPIClient.model.Resume;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +21,7 @@ public class ContactService {
     }
 
 
-
-    public void sendEmails(List<EmailRequest> requestList, String subject, String body){
-
-        System.out.println("hello");
+    public void sendEmails(List<EmailRequest> requestList, String subject, String body, Resume resume){
 
         for(EmailRequest request : requestList){
             try {
@@ -31,7 +29,8 @@ public class ContactService {
                 gmailAPIService.sendMessage(
                         request.getEmail(),
                         subject,
-                        "Hi "+request.getName()+","+"\n"+body
+                        "Hi "+request.getName()+","+"\n"+body,
+                        resume
                 );
 
             } catch (MessagingException | IOException e) {

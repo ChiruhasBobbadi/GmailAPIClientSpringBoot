@@ -2,6 +2,7 @@ package com.demo.gmailAPIClient.service;
 
 import com.demo.gmailAPIClient.model.GmailCredential;
 import com.demo.gmailAPIClient.model.GoogleTokenResponse;
+import com.demo.gmailAPIClient.model.Resume;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -46,7 +47,7 @@ import java.util.Properties;
 public class GmailAPIService {
 
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    final String fromEmail = "chiruhasbobbadi.dev@gmail.com";
+
     private final HttpTransport httpTransport;
     private GmailCredential gmailCredential;
     @Value("${spring.google.client-id}")
@@ -55,6 +56,9 @@ public class GmailAPIService {
     private String secretKey;
     @Value("${spring.google.refresh-token}")
     private String refreshToken;
+
+    @Value("${FROM_EMAIL}")
+    private String fromEmail;
 
     @SneakyThrows
     public GmailAPIService() {
@@ -75,12 +79,27 @@ public class GmailAPIService {
     public boolean sendMessage(
             String toEmail,
             String subject,
-            String body) throws MessagingException, IOException {
+            String body, Resume resume) throws MessagingException, IOException {
 
         refreshAccessToken();
 
 
-        File file = new File("docs/chiruhas_resume_sde.pdf");
+        File file;
+
+        switch (resume){
+            case FE:
+                file = new File("docs/chiruhas_resume_fe.pdf");
+                break;
+            case SDE:
+                file = new File("docs/chiruhas_resume_sde.pdf");
+                break;
+            case MOBILE:
+                file = new File("docs/chiruhas_resume_mobile.pdf");
+                break;
+            default:
+                file = new File("docs/chiruhas_resume_sde.pdf");
+                break;
+        }
 
         //MimeMessage mime = createEmail(toEmail, fromEmail, subject, body, multipartFile);
         Message message = createMessage(fromEmail,toEmail,subject,body,file);
@@ -142,16 +161,6 @@ public class GmailAPIService {
 
         }
 
-
-    private Message createMessageWithEmail(MimeMessage emailContent)
-            throws MessagingException, IOException {
-
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        emailContent.writeTo(buffer);
-
-        return new Message()
-                .setRaw(Base64.encodeBase64URLSafeString(buffer.toByteArray()));
-    }
 
     private Credential authorize() {
 

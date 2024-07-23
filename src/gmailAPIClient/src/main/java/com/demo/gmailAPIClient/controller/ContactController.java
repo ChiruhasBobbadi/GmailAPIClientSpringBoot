@@ -2,6 +2,7 @@ package com.demo.gmailAPIClient.controller;
 
 import com.demo.gmailAPIClient.model.EmailRequest;
 import com.demo.gmailAPIClient.model.GenericRequest;
+import com.demo.gmailAPIClient.model.Resume;
 import com.demo.gmailAPIClient.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,25 +21,27 @@ public class ContactController {
 
   private final ContactService contactService;
 
-//  @PostMapping(path = "/request")
-//  public void submitContactRequest(
-//    @RequestParam("subject") String subject,
-//    @RequestParam("description") String description,
-//    @RequestBody MultipartFile file) {
-//    contactService.submitContactRequest(subject, description, file, );
-//  }
 
 
   @PostMapping(path = "/sde")
   public void multiEmailRequest(@RequestBody GenericRequest request){
 
-    contactService.sendEmails(request.getRequestList(),request.getSubject(),request.getBody());
+    contactService.sendEmails(request.getRequestList(),request.getSubject(),request.getBody(), Resume.SDE);
 
   }
 
-  @PostMapping(path = "/mobile")
-  public void multiMobileEmailRequest(List<EmailRequest> requestList, String subject, String description){
+  @PostMapping(path = "/fe")
+  public void frontEndRequest(@RequestBody GenericRequest request){
 
+    contactService.sendEmails(request.getRequestList(),request.getSubject(),request.getBody(), Resume.FE);
+
+  }
+
+
+
+  @PostMapping(path = "/mobile")
+  public void mobileRequest(@RequestBody GenericRequest request){
+      contactService.sendEmails(request.getRequestList(),request.getSubject(),request.getBody(), Resume.MOBILE);
   }
 
 }
